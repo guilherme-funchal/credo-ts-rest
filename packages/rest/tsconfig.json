@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2021.Promise"],
+    "types": ["jest", "node"],
+    "skipLibCheck": false,
+  }
+}

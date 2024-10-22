@@ -1,0 +1,31 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const FeatureRegistry_1 = require("../../../agent/FeatureRegistry");
+const DependencyManager_1 = require("../../../plugins/DependencyManager");
+const ConnectionsApi_1 = require("../ConnectionsApi");
+const ConnectionsModule_1 = require("../ConnectionsModule");
+const ConnectionsModuleConfig_1 = require("../ConnectionsModuleConfig");
+const DidExchangeProtocol_1 = require("../DidExchangeProtocol");
+const repository_1 = require("../repository");
+const services_1 = require("../services");
+jest.mock('../../../plugins/DependencyManager');
+const DependencyManagerMock = DependencyManager_1.DependencyManager;
+const dependencyManager = new DependencyManagerMock();
+jest.mock('../../../agent/FeatureRegistry');
+const FeatureRegistryMock = FeatureRegistry_1.FeatureRegistry;
+const featureRegistry = new FeatureRegistryMock();
+describe('ConnectionsModule', () => {
+    test('registers dependencies on the dependency manager', () => {
+        const connectionsModule = new ConnectionsModule_1.ConnectionsModule();
+        connectionsModule.register(dependencyManager, featureRegistry);
+        expect(dependencyManager.registerContextScoped).toHaveBeenCalledTimes(1);
+        expect(dependencyManager.registerContextScoped).toHaveBeenCalledWith(ConnectionsApi_1.ConnectionsApi);
+        expect(dependencyManager.registerInstance).toHaveBeenCalledTimes(1);
+        expect(dependencyManager.registerInstance).toHaveBeenCalledWith(ConnectionsModuleConfig_1.ConnectionsModuleConfig, connectionsModule.config);
+        expect(dependencyManager.registerSingleton).toHaveBeenCalledTimes(4);
+        expect(dependencyManager.registerSingleton).toHaveBeenCalledWith(services_1.ConnectionService);
+        expect(dependencyManager.registerSingleton).toHaveBeenCalledWith(DidExchangeProtocol_1.DidExchangeProtocol);
+        expect(dependencyManager.registerSingleton).toHaveBeenCalledWith(services_1.TrustPingService);
+        expect(dependencyManager.registerSingleton).toHaveBeenCalledWith(repository_1.ConnectionRepository);
+    });
+});
