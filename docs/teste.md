@@ -3,7 +3,7 @@
 Execução de testes no Credo-ts no modo REST
 
 # Pré-requisito : 
-Executar o serviço REST conforme abaixo:
+### Executar o serviço REST conforme abaixo:
 
 ```
 #cd packages
@@ -12,14 +12,14 @@ Executar o serviço REST conforme abaixo:
 
 ## 1)Criar um identificado DID no endpoint /dids/create
 
-Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme abaixo:
+### Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme abaixo:
 
 ```
 {
   "method": "ethr"
 }
 ```
-Resposta com código 200 com o seguinte conteúdo: 
+### Resposta com código 200 com o seguinte conteúdo: 
 
 ```
 {
@@ -59,15 +59,28 @@ Resposta com código 200 com o seguinte conteúdo:
 }
 
 ```
-Observe que os valores gerados são:
+### Observe que os valores gerados são:
+
 ```
 "did": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25"
 "publicKeyBase58": "xKMR83vpSoSyNro8SWTWdoY1Q6eNoWx4i6zmoUUyZzua"
 ```
 
+### Para teste com Curl
+
+```
+curl -X 'POST' \
+  'http://localhost:3000/dids/create' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "method": "ethr"
+}'
+```
+
 ## 2) Registrar o schema no endpoint /AnonCreds/RegisterSchema
 
-Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme abaixo:
+### Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme abaixo:
 
 ```
 {
@@ -88,7 +101,7 @@ Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme
 }
 ```
 
-Resposta com código 200 com o seguinte conteúdo: 
+### Resposta com código 200 com o seguinte conteúdo: 
 
 ```
 {
@@ -109,9 +122,35 @@ Resposta com código 200 com o seguinte conteúdo:
 }
 ```
 
-Observe que os valores gerados são:
+### Observe que os valores gerados são:
+
 ```
 "schemaId": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25/anoncreds/v0/SCHEMA/schema-name/1.0"
+```
+
+### Para teste com Curl:
+
+```
+curl -X 'POST' \
+  'http://localhost:3000/anoncreds/schemas' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "schema": {
+    "issuerId": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25",
+    "name": "schema-name",
+    "version": "1.0",
+    "attrNames": [
+      "age"
+    ]
+  },
+  "options": {
+   "accountKey": {
+     "keyType": "k256",
+     "publicKeyBase58": "xKMR83vpSoSyNro8SWTWdoY1Q6eNoWx4i6zmoUUyZzua"
+   }
+  }
+}'
 ```
 
 ## 3) Registrar o schema no endpoint /anoncreds/credential-definitions
@@ -135,7 +174,7 @@ Executar o teste no botão "Try out" preenchendo o campo "Request body" conforme
 }
 ```
 
-Resposta com código 200 com o seguinte conteúdo: 
+### Resposta com código 200 com o seguinte conteúdo: 
 
 ```
 {
@@ -167,9 +206,31 @@ Resposta com código 200 com o seguinte conteúdo:
 
 ```
 
-Observe que os valores gerados são:
+### Observe que os valores gerados são:
 ```
 "credentialDefinitionId": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25/anoncreds/v0/CLAIM_DEF/did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25/anoncreds/v0/SCHEMA/schema-name/1.0/definition"
 
 ```
 
+### Para teste com Curl:
+
+```
+curl -X 'POST' \
+  'http://localhost:3000/anoncreds/credential-definitions' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "credentialDefinition": {
+    "issuerId": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25",
+    "schemaId": "did:ethr:0xA20427CA7630b97A90c1866cc167A6E95B1eAc25/anoncreds/v0/SCHEMA/schema-name/1.0",
+    "tag": "definition"
+  },
+  "options": {
+     "supportRevocation": false,
+     "accountKey": {
+       "keyType": "k256",
+       "publicKeyBase58": "xKMR83vpSoSyNro8SWTWdoY1Q6eNoWx4i6zmoUUyZzua"
+   }
+  }
+}'
+```
